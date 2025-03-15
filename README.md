@@ -1,1 +1,1 @@
-# ChecKThisOut
+# CheckThisOut
