@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pixel Apology Story</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      /* Adjust these colors as you like */
+      --skin:  #ffe0bd;
+      --hair:  #654321;
+      --eye:   #6b8e23;
+      --shirt: #4682b4;
+      --pants: #2f4f4f;
+      --shoe:  #333;
+      --border: 1px solid #000;
+    }
+
+    /* Full viewport for easy centering */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Press Start 2P', cursive;
+      background: linear-gradient(135deg, #87CEEB, #E0FFFF);
+      overflow-x: hidden;
+    }
+
+    /* Flex container to center everything */
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+    }
+
+    /* The pixel character uses a 120×240 container with 10×10 blocks */
+    .pixel-character {
+      position: relative;
+      width: 120px;
+      height: 240px;
+      transform-origin: bottom;
+      animation: float 3s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+    .pixel {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border: 1px solid transparent; /* subtle “pixel” outline on hover */
+      transition: all 0.3s ease;
+    }
+    .pixel:hover {
+      border-color: #000;
+    }
+
+    /* HEAD + HAIR */
+    .head {
+      width: 40px;
+      height: 40px;
+      background: var(--skin);
+      left: 40px;
+      top: 10px;
+      border: var(--border);
+      box-sizing: border-box;
+    }
+    .hair-top {
+      width: 44px;
+      height: 8px;
+      background: var(--hair);
+      left: 38px;
+      top: 2px;
+      border: var(--border);
+      box-sizing: border-box;
+      border-radius: 1px;
+    }
+
+    /* EYES & EYEBROWS */
+    .eye {
+      width: 6px;
+      height: 6px;
+      background: var(--eye);
+      top: 25px;
+      border: var(--border);
+      box-sizing: border-box;
+    }
+    .left-eye  { left: 48px; }
+    .right-eye { left: 68px; }
+    .pupil {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #000;
+      top: 2px; 
+      left: 2px;
+    }
+    .eyebrow {
+      width: 8px;
+      height: 2px;
+      background: var(--hair);
+      border: var(--border);
+      box-sizing: border-box;
+    }
+    .left-eyebrow  { left: 46px; top: 15px; }
+    .right-eyebrow { left: 66px; top: 15px; }
+
+    /* MOUTH */
+    .mouth {
+      width: 8px;
+      height: 2px;
+      background: #000;
+      left: 52px;
+      top: 36px;
+      border-radius: 0 0 4px 4px;
+      z-index: 4;
+    }
+
+    /* BIG BEARD */
+    .beard {
+      width: 40px;
+      height: 18px;
+      background: var(--hair);
+      left: 40px;
+      top: 32px;
+      border: var(--border);
+      box-sizing: border-box;
+      border-radius: 0 0 6px 6px;
+      z-index: 1;
+    }
+
+    /* BODY / ARMS / LEGS */
+    .body {
+      width: 44px;
+      height: 80px;
+      background: var(--shirt);
+      left: 38px;
+      top: 60px;
+      border: var(--border);
+      box-sizing: border-box;
+      border-radius: 2px;
+    }
+    .arm {
+      width: 10px;
+      height: 50px;
+      background: var(--skin);
+      transform-origin: top;
+      border: var(--border);
+      box-sizing: border-box;
+    }
+    .arm.left {
+      left: 28px;
+      top: 70px;
+      animation: wave 1.5s infinite;
+    }
+    .arm.right {
+      left: 86px;
+      top: 70px;
+      animation: none;
+    }
+    .hand {
+      width: 14px;
+      height: 10px;
+      background: var(--skin);
+      bottom: -10px;
+      left: -2px;
+      border: var(--border);
+      box-sizing: border-box;
+      border-radius: 2px;
+    }
+    .leg {
+      width: 14px;
+      height: 50px;
+      background: var(--pants);
+      top: 140px;
+      border: var(--border);
+      box-sizing: border-box;
+    }
+    .left-leg  { left: 44px; }
+    .right-leg { left: 66px; }
+    .shoe {
+      width: 18px;
+      height: 8px;
+      background: var(--shoe);
+      bottom: -8px;
+      border-radius: 2px;
+      border: var(--border);
+      box-sizing: border-box;
+    }
+
+    /* TEARS (HIDDEN INITIALLY) */
+    .tear {
+      width: 6px;
+      height: 6px;
+      background: #87ceeb;
+      animation: cry 1s infinite;
+      position: absolute;
+      border-radius: 50%;
+      border: var(--border);
+      box-sizing: border-box;
+      display: none;
+    }
+    /* Position tears near eyes */
+    #tear1 {
+      left: 50px; 
+      top: 30px;
+    }
+    #tear2 {
+      left: 70px; 
+      top: 30px;
+    }
+
+    /* BOUQUET (hidden initially) */
+    .flower {
+      position: absolute;
+      left: -3px; 
+      top: 38px; 
+      animation: flowers 0.5s ease-out;
+      display: none;
+    }
+    .flower .petal {
+      width: 6px;
+      height: 6px;
+      background: #ff69b4;
+      border: var(--border);
+      box-sizing: border-box;
+      position: absolute;
+    }
+    /* 8 petals + center + leaves => bigger bloom */
+    .flower .petal:nth-child(1)  { left: 6px;  top: 0px;  }
+    .flower .petal:nth-child(2)  { left: 2px;  top: 2px;  }
+    .flower .petal:nth-child(3)  { left: 10px; top: 2px;  }
+    .flower .petal:nth-child(4)  { left: 0px;  top: 6px;  }
+    .flower .petal:nth-child(5)  { left: 12px; top: 6px;  }
+    .flower .petal:nth-child(6)  { left: 2px;  top: 10px; }
+    .flower .petal:nth-child(7)  { left: 10px; top: 10px; }
+    .flower .petal:nth-child(8)  { left: 6px;  top: 12px; }
+    .flower .center {
+      width: 4px;
+      height: 4px;
+      background: #ffd700;
+      border: var(--border);
+      box-sizing: border-box;
+      position: absolute;
+      left: 5px; 
+      top: 5px;
+    }
+    .flower .leaf {
+      width: 4px;
+      height: 6px;
+      background: #228b22;
+      border: var(--border);
+      box-sizing: border-box;
+      position: absolute;
+    }
+    .flower .leaf:nth-of-type(1) { left: 4px; top: 16px; }
+    .flower .leaf:nth-of-type(2) { left: 8px; top: 16px; }
+
+    /* ANIMATIONS */
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(25deg); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes jump {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes cry {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(50px); opacity: 0; }
+    }
+    @keyframes flowers {
+      0% { transform: scale(0); }
+      80% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    @keyframes fall {
+      0%   { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(120vh); opacity: 0; }
+    }
+
+    /* PIXEL HEART RAIN */
+    .pixel-heart {
+      position: fixed;
+      top: -5%;
+      font-size: 20px;
+      color: #ff69b4;
+      animation: fall 3s linear;
+      pointer-events: none; /* hearts don't block clicks */
+    }
+
+    /* MESSAGE BOX */
+    .message-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      max-width: 600px;
+      text-align: center;
+    }
+    .message-box h2,
+    .message-box p {
+      margin-top: 0;
+      margin-bottom: 1em;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s ease;
+      font-family: inherit;
+    }
+    .next-btn {
+      background: #0066CC;
+      color: #fff;
+    }
+    .yes-btn {
+      background: #4CAF50;
+      color: #fff;
+    }
+    .no-btn {
+      background: #f44336;
+      color: #fff;
+    }
+    button:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="content-wrapper">
+    <!-- PIXEL CHARACTER (Older, bigger version) -->
+    <div class="pixel-character" id="character">
+      <!-- Head + Hair -->
+      <div class="pixel head"></div>
+      <div class="pixel hair-top"></div>
+      <!-- Eyes -->
+      <div class="pixel eye left-eye"><div class="pupil"></div></div>
+      <div class="pixel eye right-eye"><div class="pupil"></div></div>
+      <!-- Eyebrows -->
+      <div class="pixel eyebrow left-eyebrow"></div>
+      <div class="pixel eyebrow right-eyebrow"></div>
+      <!-- Mouth -->
+      <div class="pixel mouth"></div>
+      <!-- Big Beard -->
+      <div class="pixel beard"></div>
+      <!-- Body -->
+      <div class="pixel body"></div>
+      <!-- Left Arm -->
+      <div class="pixel arm left" id="leftArm">
+        <div class="pixel hand"></div>
+        <!-- Bouquet (Hidden Initially) -->
+        <div class="flower" id="flower">
+          <div class="pixel petal"></div>
+          <div class="pixel petal"></div>
+          <div class="pixel petal"></div>
+          <div class="pixel petal"></div>
+          <div class="pixel petal"></div>
+          <div class="pixel petal"></div>
+          <div class="pixel petal"></div>
+          <div class="pixel petal"></div>
+          <div class="pixel center"></div>
+          <div class="pixel leaf"></div>
+          <div class="pixel leaf"></div>
+        </div>
+      </div>
+      <!-- Right Arm -->
+      <div class="pixel arm right">
+        <div class="pixel hand right"></div>
+      </div>
+      <!-- Legs -->
+      <div class="pixel leg left-leg">
+        <div class="pixel shoe" style="left: -2px;"></div>
+      </div>
+      <div class="pixel leg right-leg">
+        <div class="pixel shoe" style="left: -2px;"></div>
+      </div>
+      <!-- Tears (Hidden Initially) -->
+      <div class="tear" id="tear1"></div>
+      <div class="tear" id="tear2"></div>
+    </div>
+
+    <!-- MESSAGE BOX -->
+    <div class="message-box" id="messageBox"></div>
+  </div>
+
+  <script>
+    /****************************************************************
+     * STORY MESSAGES
+     ****************************************************************/
+    const storyMessages = [
+      "Hey, I’m a pixel version of Karim. I'm so excited to share a short story with you. Are you ready?",
+      "Once upon a time, I made a small but meaningful mistake...",
+      "I saw you, but I didn't have the courage to say hi, and that weighed on my conscience.",
+      "It might not sound huge, but I felt I'd done you wrong by not acknowledging your presence.",
+      "Now, I'd like to make things right..."
+    ];
+
+    let storyIndex = 0; // which part of the story we're on
+    let heartInterval;  // for heart rain
+
+    // DOM elements
+    const character  = document.getElementById('character');
+    const flower     = document.getElementById('flower');
+    const tear1      = document.getElementById('tear1');
+    const tear2      = document.getElementById('tear2');
+    const messageBox = document.getElementById('messageBox');
+
+    // Initialize the page
+    initStory();
+
+    function initStory() {
+      storyIndex = 0;
+      showStoryMessage(storyMessages[storyIndex]);
+    }
+
+    function showStoryMessage(msg) {
+      messageBox.innerHTML = `
+        <p>${msg}</p>
+        <button class="next-btn" id="nextBtn">Next</button>
+      `;
+      document.getElementById('nextBtn').addEventListener('click', advanceStory);
+    }
+
+    function advanceStory() {
+      storyIndex++;
+      if (storyIndex < storyMessages.length) {
+        showStoryMessage(storyMessages[storyIndex]);
+      } else {
+        showFinalApology();
+      }
+    }
+
+    function showFinalApology() {
+      messageBox.innerHTML = `
+        <h2>I'm sorry I didn't say hi last time 😔</h2>
+        <p>Can you ever forgive me?</p>
+        <button class="yes-btn" id="yesBtn">YES! 😊</button>
+        <button class="no-btn" id="noBtn">No... 😢</button>
+      `;
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn  = document.getElementById('noBtn');
+
+      yesBtn.addEventListener('click', acceptApology);
+      noBtn.addEventListener('click', rejectApology);
+    }
+
+    function acceptApology() {
+      // Character jump
+      character.style.animation = 'jump 0.6s';
+      // Show bouquet
+      flower.style.display = 'block';
+      // Start heart rain
+      startHeartRain();
+      // Update message
+      messageBox.innerHTML = `
+        <h2>Thank you! 💐</h2>
+        <p>I promise to always say hi! 🫶</p>
+        <div style="font-size: 0.8em; margin-top: 15px;">(Refresh page to start over)</div>
+      `;
+    }
+
+    function rejectApology() {
+      // Show tears & slump the character
+      tear1.style.display = 'block';
+      tear2.style.display = 'block';
+      character.style.transform = 'rotate(-10deg)';
+      // Mature “No” response
+      messageBox.innerHTML = `
+        <h2>I totally understand.</h2>
+        <p>If there's ever another chance to say hi, I'd be glad to do it properly.</p>
+        <button id="retryBtn">Try Again 🔄</button>
+      `;
+      document.getElementById('retryBtn').addEventListener('click', () => location.reload());
+    }
+
+    /****************************************************************
+     * HEART RAIN
+     ****************************************************************/
+    function startHeartRain() {
+      // Spawn hearts every 300 ms for 10s
+      heartInterval = setInterval(createHeart, 300);
+      setTimeout(() => clearInterval(heartInterval), 10000);
+    }
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('pixel-heart');
+      heart.innerHTML = '♥';
+      // random horizontal position
+      heart.style.left = Math.random() * 100 + '%';
+      document.body.appendChild(heart);
+      // remove after 3s
+      setTimeout(() => heart.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
